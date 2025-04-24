@@ -1,13 +1,13 @@
 package com.gtfs;
 
 import com.gtfs.service.GtfsScheduleService;
-import com.gtfs.util.CsvReader;
+import com.gtfs.util.GtfsCsvParser;
 
 public class GtfsScheduleApp {
     public static void main(String[] args) {
         System.out.println("Welcome to GTFS Schedule App!");
 
-        CsvReader.readCSV("routes.txt");
+        GtfsCsvParser.readCSV("routes.txt");
 
         if(args.length > 3) {
             System.out.println("Use format: busTrips stop_id number_of_next_buses relative/absolute");
