@@ -11,13 +11,13 @@ import java.util.List;
 
 public class TimesUtil {
 
-    public static LocalTime parseArrivalTime(String arrivalTimeStr) {
+    public static LocalTime parseArrivalTime(String arrivalTime) {
         DateTimeFormatter formattedTime = DateTimeFormatter.ofPattern("HH:mm:ss");
 
         try {
-            return LocalTime.parse(arrivalTimeStr, formattedTime);
+            return LocalTime.parse(arrivalTime, formattedTime);
         } catch (DateTimeParseException e) {
-            System.err.println("Invalid time format: " + arrivalTimeStr);
+            System.err.println("Invalid time format: " + arrivalTime);
             return null;
         }
     }
@@ -29,8 +29,8 @@ public class TimesUtil {
 
         return stopTimes.stream()
             .filter(st -> {
-                String arrivalTimeStr = st.getArrivalTime();
-                LocalTime stopTime = parseArrivalTime(arrivalTimeStr);
+                String arrivalTime = st.getArrivalTime();
+                LocalTime stopTime = parseArrivalTime(arrivalTime);
 
                 if (stopTime == null) {
                     return false;
@@ -47,9 +47,9 @@ public class TimesUtil {
         LocalTime currentTime = LocalTime.of(12,0);
 
         for (StopTimeModel st : stopTimes) {
-            String arrivalTimeStr = st.getArrivalTime();
+            String arrivalTime = st.getArrivalTime();
 
-            LocalTime stopTime = parseArrivalTime(arrivalTimeStr);
+            LocalTime stopTime = parseArrivalTime(arrivalTime);
             if (stopTime == null) {
                 continue;
             }
