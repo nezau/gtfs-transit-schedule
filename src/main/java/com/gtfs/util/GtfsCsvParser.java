@@ -43,7 +43,7 @@ public class GtfsCsvParser {
     }
 
     // Convert CSV data to StopModel
-    public static List<StopModel> readStopsCSV(String filePath) {
+    public static List<StopModel> readStopsCSV() {
         List<StopModel> stops = new ArrayList<>();
         List<String[]> allData = readCSV("stops.txt");
 
@@ -56,7 +56,7 @@ public class GtfsCsvParser {
     }
 
     // Convert CSV data to StopTimeModel
-    public static List<StopTimeModel> readStopTimesCSV(String filePath) {
+    public static List<StopTimeModel> readStopTimesCSV() {
         List<StopTimeModel> stopTimes = new ArrayList<>();
         List<String[]> allData = readCSV("stop_times.txt");
 
@@ -71,9 +71,9 @@ public class GtfsCsvParser {
     }
 
     // Convert CSV data to TripModel
-    public static List<TripModel> readTripsCSV(String filePath) {
+    public static List<TripModel> readTripsCSV() {
         List<TripModel> trips = new ArrayList<>();
-        List<String[]> allData = readCSV(filePath);
+        List<String[]> allData = readCSV("trips.txt");
 
         for (String[] row : allData) {
             String tripId = row[2];
