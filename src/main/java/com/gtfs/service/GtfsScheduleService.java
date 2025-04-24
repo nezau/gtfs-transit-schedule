@@ -5,9 +5,9 @@ import com.gtfs.model.StopModel;
 import com.gtfs.model.StopTimeModel;
 import com.gtfs.model.TripModel;
 import com.gtfs.util.GtfsCsvParser;
+import com.gtfs.util.TimesUtil;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GtfsScheduleService {
 
@@ -37,9 +37,19 @@ public class GtfsScheduleService {
         } else {
             System.out.println("Found stop times for stop ID: " + stopId);
             for (StopTimeModel stopTime : stopTimesForStop) {
-                System.out.println("Stop Time: " + stopTime);
+                System.out.println("Stop Time: " + stopTime.getArrivalTime());
             }
         }
+
+        List<StopTimeModel> absoluteTimes = TimesUtil.getAbsoluteTimes(stopTimes);
+        List<Long> relativeTimes = TimesUtil.getRelativeTimes(absoluteTimes);
+        for (StopTimeModel at : absoluteTimes) {
+            System.out.println("Stop Times until two hours after current time:" + at.getArrivalTime());
+        }
+        for (Long rt : relativeTimes) {
+            System.out.println("Stop Times until two hours after current time:" + rt);
+        }
+
 
 
     }
