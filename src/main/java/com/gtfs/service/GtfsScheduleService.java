@@ -7,6 +7,7 @@ import com.gtfs.model.TripModel;
 import com.gtfs.util.GtfsCsvParser;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GtfsScheduleService {
 
@@ -27,7 +28,19 @@ public class GtfsScheduleService {
             return;
         }
 
-        System.out.println("Schedule for stop: " + stop.getStopName());
+//        System.out.println("Schedule for stop: " + stop.getStopName());
+
+        List<StopTimeModel> stopTimesForStop = stopTimes.stream().filter(st -> st.getStopId().equals(stopId)).toList();
+
+        if (stopTimesForStop.isEmpty()) {
+            System.err.println("No stop times found for stop ID: " + stopId);
+        } else {
+            System.out.println("Found stop times for stop ID: " + stopId);
+            for (StopTimeModel stopTime : stopTimesForStop) {
+                System.out.println("Stop Time: " + stopTime);
+            }
+        }
+
 
     }
 }
