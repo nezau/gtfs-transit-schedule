@@ -15,19 +15,15 @@ public class GtfsScheduleService {
 
     public void getScheduleService(String stopId, int numberOfBuses, String time) {
         List<RouteModel> routes = GtfsCsvParser.readRoutesCSV();
-        List<StopModel> stops = GtfsCsvParser.readStopsCSV();
         List<StopTimeModel> stopTimes = GtfsCsvParser.readStopTimesCSV();
         List<TripModel> trips = GtfsCsvParser.readTripsCSV();
 
-        // Filter stopTimes for the specified stop and time
         List<StopTimeModel> stopTimesFromStop = TimesUtil.getAbsoluteTimes(getStopTimesFromStop(stopId, stopTimes, time));
 
-        // Get trips and routes filtered by stop times
         List<TripModel> tripsFromStop = getTripsFromStopTimes(stopTimesFromStop, trips);
         List<RouteModel> routesFromTrips = getRoutesFromTrips(tripsFromStop, routes);
 
-        // Print schedules
-        printSchedule(routesFromTrips, stopTimesFromStop, tripsFromStop);
+        printSchedule(routesFromTrips, stopTimesFromStop, tripsFromStop, numberOfBuses);
     }
 
     private StopModel findStopById(String stopId, List<StopModel> stops) {
@@ -38,7 +34,6 @@ public class GtfsScheduleService {
     }
 
     private List<StopTimeModel> getStopTimesFromStop(String stopId, List<StopTimeModel> stopTimes, String time) {
-        // Convert the given time to LocalTime for easier comparison
         return stopTimes.stream()
                 .filter(st -> st.getStopId().equals(stopId))
                 .collect(Collectors.toList());
@@ -64,24 +59,27 @@ public class GtfsScheduleService {
                 .collect(Collectors.toList());
     }
 
-    private void printSchedule(List<RouteModel> routes, List<StopTimeModel> stopTimes, List<TripModel> trips) {
+    private LocalTime parseArrivalTime(String arrivalTimeStr) {
+        return TimesUtil.parseArrivalTime(arrivalTimeStr);
+    }
+
+    private void printSchedule(List<RouteModel> routes, List<StopTimeModel> stopTimes, List<TripModel> trips, int numberOfBuses) {
         routes.forEach(route -> {
             System.out.print(route.getRouteName() + " : ");
-            stopTimes.stream()
+
+            List<LocalTime> times = stopTimes.stream()
                     .filter(st -> trips.stream()
-                            .anyMatch(trip -> trip.getTripId().equals(st.getTripId()) && trip.getRouteId().equals(route.getRouteId())))
-                    .sorted((st1, st2) -> {
-                        // Sort by arrival time
-                        LocalTime time1 = TimesUtil.parseArrivalTime(st1.getArrivalTime());
-                        LocalTime time2 = TimesUtil.parseArrivalTime(st2.getArrivalTime());
-                        return time1.compareTo(time2); // Ascending order
-                    })
-                    .forEach(st -> {
-                        LocalTime stopTime = TimesUtil.parseArrivalTime(st.getArrivalTime());
-                        if (stopTime != null) {
-                            System.out.print(stopTime.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")) + "  ");
-                        }
-                    });
+                            .anyMatch(trip -> trip.getTripId().equals(st.getTripId())
+                                    && trip.getRouteId().equals(route.getRouteId())))
+                    .map(st -> parseArrivalTime(st.getArrivalTime()))
+                    .filter(Objects::nonNull)
+                    .sorted()
+                    .limit(numberOfBuses)
+                    .toList();
+
+            times.forEach(time ->
+                    System.out.print(time.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")) + "  ")
+            );
             System.out.println();
         });
     }
