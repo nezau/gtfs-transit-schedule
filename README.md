@@ -31,7 +31,6 @@ java -jar target/gtfs-schedule-viewer.jar "stop_id" "number_of_next_buses" relat
 
 ## Planned improvements
 - Implement support for relative time filtering
-- Add functionality to limit the number of buses displayed per route
 
 ### Optimization
 - Optimize memory usage by applying filters during CSV reading
